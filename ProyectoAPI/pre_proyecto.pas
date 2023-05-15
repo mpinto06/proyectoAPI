@@ -29,7 +29,7 @@ procedure fin_programa(accion: string);
 
 procedure generar_caldo;
   begin
-  {TODO: terminar este procedimiento}
+  
   end;
 
 procedure cargando;
