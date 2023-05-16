@@ -2,8 +2,8 @@ program pre_proyecto;
 
 uses crt;
 var
-x,y,opc: integer;
-caldo: string;
+x,y,z,i,opc,pos: integer;
+caldo,spos,sx,sy: string;
 
 procedure encabezado;
   begin
@@ -84,7 +84,6 @@ Begin
     case opc of
       1:
         begin
-          repeat
             clrscr;
             if (caldo <> '') then
               begin
@@ -93,64 +92,103 @@ Begin
                 writeln;
                 writeln;
               end;
-              
-            textcolor(10);
-            writeln('Seleccione 1, 2 o 3 para las diferentes opciones');
-            writeln;
-            writeln('1. Configuracion Manual');
-            writeln('2. Configuracion Aleatoria');
-            writeln('3. Regresar al Menu');
-            writeln;
-            readln(opc);
-                
-            case opc of
-              1: 
-                begin
-                  clrscr;
-                  repeat
-                      textcolor(10);
-                      writeln('Ingrese el numero de filas: ');
-                      readln(x);
 
-                      if (x < 1) or (x > 20) then
-                        begin
-                          textcolor(12);
-                          writeln('Error: Debe ingresar un numero del 1 al 20');
-                        end;
-                  until (x > 0) and (x <= 20);
-                  
-                  clrscr;
-                  repeat
+                clrscr;
+                repeat
                     textcolor(10);
                     writeln('Ingrese el numero de columnas: ');
-                    readln(y);
-                    
-                    if (y < 1) or (y > 20) then
+                    readln(x);
+
+                    if (x < 1) or (x > 20) then
                       begin
                         textcolor(12);
                         writeln('Error: Debe ingresar un numero del 1 al 20');
                       end;
-                  until (y > 0) and (y <= 20);
-                end;
-              2:
-                begin
-                  randomize;
-                  x := random(20) + 1;
-                  y := random(20) + 1;  
-                end;
-              3:
-                begin
-                  fin_programa('regresar al menu');
-                end;
-              else
-                begin
-                  clrscr;
-                  textcolor(12);
-                  writeln('Error: Solo debe ingresar numeros del 1 al 3');
-                  fin_programa('regresar');
-                end;
-            end;
-          until (opc = 3);
+                until (x > 0) and (x <= 20);
+                  
+                clrscr;
+                repeat
+                  textcolor(10);
+                  writeln('Ingrese el numero de filas: ');
+                  readln(y);
+                  
+                  if (y < 1) or (y > 20) then
+                    begin
+                      textcolor(12);
+                      writeln('Error: Debe ingresar un numero del 1 al 20');
+                    end;
+                until (y > 0) and (y <= 20);
+
+                clrscr;
+                repeat
+                  textcolor(10);
+                  writeln('Ingrese el numero de celulas vivas (un maximo de ', (x*y), '): ');
+                  readln(z);
+                  
+                  if (z > (x*y)) then
+                    begin
+                      textcolor(12);
+                      writeln('Error: El numero de celulas excede el numero de posiciones en el caldo');
+                    end;
+                  if (z < 1) then
+                    begin
+                      textcolor(12);
+                      writeln('Error: Debe existir al menos una celula viva');
+                    end;
+                until (z > 0) and (z <= (x*y));  
+            clrscr; 
+            repeat
+              clrscr;
+              textcolor(10);
+              writeln('Seleccione 1 o 2');
+              writeln;
+              writeln('1. Configuracion Manual');
+              writeln('2. Configuracion Aleatoria');
+              writeln;
+              readln(opc);
+                  
+              case opc of
+                1: 
+                  begin
+                    clrscr;
+                    for i:=1 to z do
+                      begin
+                        writeln('Ingrese la posicion de esta celula como un numero de dos digitos. (y,x)');
+                        writeln('Ejemplo: El numero 12 crea una celula en la segunda celda de la primera fila');
+                        readln(pos);
+                        str(pos,spos);
+                        caldo:=(caldo + spos + '.');
+                      end;
+                    str(x,sx);
+                    str(y,sy);
+                    caldo:=( sx + ',' + sy + ',' + caldo);
+                    writeln(caldo);                  
+                  end;
+                2:
+                  begin
+                    for i:=1 to z do
+                      begin
+                        randomize;
+                        pos:= (((random(y) + 1) * 10) + (random(x) + 1));
+                        str(pos,spos);
+                        caldo:=(caldo + spos + '.');  
+                      end;
+                    str(x,sx);
+                    str(y,sy);
+                    caldo:=( sx + ',' + sy + ',' + caldo);
+                    writeln('Su caldo ha sido creado con exito!');
+                    delay(500) 
+                  end; 
+                else
+                  begin
+                    clrscr;
+                    textcolor(12);
+                    writeln('Error: Solo debe ingresar 1 o 2');
+                    fin_programa('regresar');
+                  end;
+              end;
+            until(opc = 1) or (opc = 2); 
+          
         end;
 
       2:
