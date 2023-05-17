@@ -34,6 +34,7 @@ procedure solicitar_generacion;
       begin
         textcolor(12);
         writeln('NOTA: Si genera un nuevo caldo, se sobreescribira el existente.');
+        caldo:='';
         writeln;
         writeln;
         writeln('     Pulse cualquier tecla para continuar    ');
@@ -42,6 +43,7 @@ procedure solicitar_generacion;
 
     clrscr;
     repeat
+        encabezado;
         textcolor(10);
         writeln('Ingrese el numero de columnas: ');
         readln(x);
@@ -55,6 +57,7 @@ procedure solicitar_generacion;
                   
     clrscr;
     repeat
+      encabezado;
       textcolor(10);
       writeln('Ingrese el numero de filas: ');
       readln(y);
@@ -68,6 +71,7 @@ procedure solicitar_generacion;
 
     clrscr;
     repeat
+      encabezado;
       textcolor(10);
       writeln('Ingrese el numero de celulas vivas (un maximo de ', (x*y), '): ');
       readln(z);
@@ -88,24 +92,27 @@ procedure solicitar_generacion;
 
 procedure generar_caldo_manual(celulas: integer);
   var
-    i,pos: integer;
-    sx,sy,spos: string;
+    i: integer;
+    sx,sy,sz,pos: string;
   begin
     i:=0;
     while i < celulas do
       begin
-
         clrscr;
-        writeln('Ingrese la posicion de esta celula como un numero de dos digitos. (y,x)');
-        writeln('Ejemplo: 12 crea una celula en la segunda celda de la primera fila');
+        encabezado;
+        textcolor(10);
+        writeln('Ingrese las coordenadas de esta celula. (y,x)');
+        writeln('Ejemplo: "1,2" crea una celula en la segunda celda de la primera fila');
         readln(pos);
-        str(pos,spos);
-        caldo:=(caldo + spos + '.');
+        caldo:=(caldo + '(' + pos + ')/');
         i:= i + 1;
       end;
     str(x,sx);
     str(y,sy);
-    caldo:=( sy + ',' + sx + ',' + caldo);
+    str(z,sz);
+    caldo:=( sy + '.' + sx + '.' + sz + '.' + caldo);
+    encabezado;
+    textcolor(10);
     writeln('Su caldo ha sido creado con exito!');
     writeln(caldo);
     delay(500);
@@ -113,18 +120,22 @@ procedure generar_caldo_manual(celulas: integer);
 
 procedure generar_caldo_automatico(celulas: integer);
   var
-    i,pos: integer;
-    sx,sy,spos: string;
+    i: integer;
+    sx,sy,sz,pos,sp1,sp2: string;
   begin
     for i:=1 to celulas do
       begin
-        pos:= (((random(y) + 1) * 10) + (random(x) + 1));
-        str(pos,spos);
-        caldo:=(caldo + spos + '.');  
+        str((random(y) + 1),sp1);
+        str((random(x) + 1),sp2);
+        pos:= (sp1) + ',' + (sp2);
+        caldo:=(caldo + '(' + pos + ')/');  
       end;
     str(x,sx);
     str(y,sy);
-    caldo:=( sy + ',' + sx + ',' + caldo);
+    str(z,sz);
+    caldo:=( sy + '.' + sx + '.' + sz + '.' + caldo);
+    encabezado;
+    textcolor(10);
     writeln('Su caldo ha sido creado con exito!');
     writeln(caldo);
     delay(500);
@@ -186,6 +197,7 @@ Begin
             solicitar_generacion; 
             repeat
               clrscr;
+              encabezado;
               textcolor(10);
               writeln('Seleccione 1 o 2');
               writeln;
