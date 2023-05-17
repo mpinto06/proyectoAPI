@@ -2,17 +2,17 @@ program pre_proyecto;
 
 uses crt;
 var
-x,y,z,i,opc,pos: integer;
-caldo,spos,sx,sy: string;
+x,y,z,opc: integer;
+caldo: string;
 
 procedure encabezado;
   begin
     textcolor(11);
     writeln('                    Universidad Catolica Andres Bello');
-    writeln('                  Materia : Algoritmos y Programacion I');
+    writeln('                  Catedra : Algoritmos y Programacion I');
     textcolor(14);
     writeln('                            Elaborado por: ');
-    writeln('      Miguel Pinto, Juan Brillembourg, Cristina Carnevali, Humberto Aleman');
+    writeln('   Miguel Pinto, Juan Brillembourg, Cristina Carnevali, Humberto Aleman');
     writeln;
     writeln;
   end;
@@ -27,10 +27,108 @@ procedure fin_programa(accion: string);
     textbackground(0);
   end;
 
-procedure generar_caldo;
+procedure solicitar_generacion;
   begin
-  
+    clrscr;
+    if (caldo <> '') then
+      begin
+        textcolor(12);
+        writeln('NOTA: Si genera un nuevo caldo, se sobreescribira el existente.');
+        writeln;
+        writeln;
+        writeln('     Pulse cualquier tecla para continuar    ');
+        readkey;
+      end;
+
+    clrscr;
+    repeat
+        textcolor(10);
+        writeln('Ingrese el numero de columnas: ');
+        readln(x);
+
+        if (x < 1) or (x > 20) then
+          begin
+            textcolor(12);
+            writeln('Error: Debe ingresar un numero del 1 al 20');
+          end;
+    until (x > 0) and (x <= 20);
+                  
+    clrscr;
+    repeat
+      textcolor(10);
+      writeln('Ingrese el numero de filas: ');
+      readln(y);
+      
+      if (y < 1) or (y > 20) then
+        begin
+          textcolor(12);
+          writeln('Error: Debe ingresar un numero del 1 al 20');
+        end;
+    until (y > 0) and (y <= 20);
+
+    clrscr;
+    repeat
+      textcolor(10);
+      writeln('Ingrese el numero de celulas vivas (un maximo de ', (x*y), '): ');
+      readln(z);
+                  
+      if (z > (x*y)) then
+        begin
+          textcolor(12);
+          writeln('Error: El numero de celulas excede el numero de posiciones en el caldo');
+        end;
+      if (z < 1) then
+        begin
+          textcolor(12);
+          writeln('Error: Debe existir al menos una celula viva');
+        end;
+    until (z > 0) and (z <= (x*y));  
+    clrscr;
   end;
+
+procedure generar_caldo_manual(celulas: integer);
+  var
+    i,pos: integer;
+    sx,sy,spos: string;
+  begin
+    i:=0;
+    while i < celulas do
+      begin
+
+        clrscr;
+        writeln('Ingrese la posicion de esta celula como un numero de dos digitos. (y,x)');
+        writeln('Ejemplo: 12 crea una celula en la segunda celda de la primera fila');
+        readln(pos);
+        str(pos,spos);
+        caldo:=(caldo + spos + '.');
+        i:= i + 1;
+      end;
+    str(x,sx);
+    str(y,sy);
+    caldo:=( sy + ',' + sx + ',' + caldo);
+    writeln('Su caldo ha sido creado con exito!');
+    writeln(caldo);
+    delay(500);
+  end;
+
+procedure generar_caldo_automatico(celulas: integer);
+  var
+    i,pos: integer;
+    sx,sy,spos: string;
+  begin
+    for i:=1 to celulas do
+      begin
+        pos:= (((random(y) + 1) * 10) + (random(x) + 1));
+        str(pos,spos);
+        caldo:=(caldo + spos + '.');  
+      end;
+    str(x,sx);
+    str(y,sy);
+    caldo:=( sy + ',' + sx + ',' + caldo);
+    writeln('Su caldo ha sido creado con exito!');
+    writeln(caldo);
+    delay(500);
+  end;  
 
 procedure cargando;
   begin
@@ -67,6 +165,7 @@ procedure cargando;
   end;
 
 Begin
+  randomize;
   caldo := '';
   repeat
     cargando;
@@ -84,59 +183,7 @@ Begin
     case opc of
       1:
         begin
-            clrscr;
-            if (caldo <> '') then
-              begin
-                textcolor(12);
-                writeln('NOTA: Si genera un nuevo caldo, se sobreescribira al existente.');
-                writeln;
-                writeln;
-              end;
-
-                clrscr;
-                repeat
-                    textcolor(10);
-                    writeln('Ingrese el numero de columnas: ');
-                    readln(x);
-
-                    if (x < 1) or (x > 20) then
-                      begin
-                        textcolor(12);
-                        writeln('Error: Debe ingresar un numero del 1 al 20');
-                      end;
-                until (x > 0) and (x <= 20);
-                  
-                clrscr;
-                repeat
-                  textcolor(10);
-                  writeln('Ingrese el numero de filas: ');
-                  readln(y);
-                  
-                  if (y < 1) or (y > 20) then
-                    begin
-                      textcolor(12);
-                      writeln('Error: Debe ingresar un numero del 1 al 20');
-                    end;
-                until (y > 0) and (y <= 20);
-
-                clrscr;
-                repeat
-                  textcolor(10);
-                  writeln('Ingrese el numero de celulas vivas (un maximo de ', (x*y), '): ');
-                  readln(z);
-                  
-                  if (z > (x*y)) then
-                    begin
-                      textcolor(12);
-                      writeln('Error: El numero de celulas excede el numero de posiciones en el caldo');
-                    end;
-                  if (z < 1) then
-                    begin
-                      textcolor(12);
-                      writeln('Error: Debe existir al menos una celula viva');
-                    end;
-                until (z > 0) and (z <= (x*y));  
-            clrscr; 
+            solicitar_generacion; 
             repeat
               clrscr;
               textcolor(10);
@@ -151,33 +198,14 @@ Begin
                 1: 
                   begin
                     clrscr;
-                    for i:=1 to z do
-                      begin
-                        writeln('Ingrese la posicion de esta celula como un numero de dos digitos. (y,x)');
-                        writeln('Ejemplo: El numero 12 crea una celula en la segunda celda de la primera fila');
-                        readln(pos);
-                        str(pos,spos);
-                        caldo:=(caldo + spos + '.');
-                      end;
-                    str(x,sx);
-                    str(y,sy);
-                    caldo:=( sx + ',' + sy + ',' + caldo);
-                    writeln(caldo);                  
+                    generar_caldo_manual(z);
+                    fin_programa('regresar al menu');                  
                   end;
                 2:
                   begin
-                    for i:=1 to z do
-                      begin
-                        randomize;
-                        pos:= (((random(y) + 1) * 10) + (random(x) + 1));
-                        str(pos,spos);
-                        caldo:=(caldo + spos + '.');  
-                      end;
-                    str(x,sx);
-                    str(y,sy);
-                    caldo:=( sx + ',' + sy + ',' + caldo);
-                    writeln('Su caldo ha sido creado con exito!');
-                    delay(500) 
+                    clrscr;
+                    generar_caldo_automatico(z);
+                    fin_programa('regresar al menu'); 
                   end; 
                 else
                   begin
@@ -188,9 +216,7 @@ Begin
                   end;
               end;
             until(opc = 1) or (opc = 2); 
-          
         end;
-
       2:
         begin
           clrscr;
@@ -227,8 +253,6 @@ Begin
           fin_programa('regresar al menu');
           clrscr;
         end;
-      
       end;
-  until (opc = 4);
-    
+  until (opc = 4);    
 End.
