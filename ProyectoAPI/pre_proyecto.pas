@@ -138,57 +138,43 @@ procedure generar_caldo_automatico(celulas: integer);
       delay(500);
    end;  
 
-procedure cargando;
+function carga(palabra:string):string;
+   var
+      i,j:integer;
    begin
-    textcolor(12);
-    delay(120);
-    write('.');
-    delay(120);
-    write('.');
-    delay(120);
-    write('.');
-    delay(120);
-    write('c');
-    delay(120);
-    write('a');
-    delay(120);
-    write('r');
-    delay(120);
-    write('g');
-    delay(120);
-    write('a');
-    delay(120);
-    write('n');
-    delay(120);
-    write('d');
-    delay(120);
-    write('o');
-    delay(120);
-    write('.');
-    delay(120);
-    write('.');
-    delay(120);
-    write('.');
-    clrscr;
-  end;
+      for i:=1 to length(palabra) do
+      begin
+         write(palabra[i]);
+         delay(100);
+      end;
+      j:=0;
+      repeat
+         write('.');
+         delay(120);
+         j:=(j+1);
+      until (j=3);
+      writeln();
+      delay(120);
+      clrscr;
+   end;
 
 Begin
-  randomize;
-  caldo := '';
-  repeat
-    cargando;
-    encabezado;
-    textcolor(10);
-    writeln('Bienvenido al Automata Celular Alive (ACA), ingrese 1, 2 o 3 para el menu.');
-    writeln;
-    writeln('1. Generar Caldo de Cautivo');
-    writeln('2. Mostrar Caldo de Cautivo');
-    writeln('3. Modificar Caldo de Cautivo existente');
-    writeln('4. Salir');
-    writeln;
-    readln(opc);
+   randomize;
+   caldo := '';
+   repeat
+      carga('Cargando');
+      encabezado;
+      textcolor(10);
+      writeln('Bienvenido al Automata Celular Alive (ACA), ingrese 1, 2 o 3 para el menu.');
+      writeln;
+      writeln('1. Generar Caldo de Cautivo');
+      writeln('2. Mostrar Caldo de Cautivo');
+      writeln('3. Modificar Caldo de Cautivo existente');
+      writeln('4. Salir');
+      writeln;
+      readln(opc);
 
-    case opc of
+      case opc of
       1: begin
          solicitar_generacion; 
          repeat
@@ -214,12 +200,12 @@ Begin
                   fin_programa('regresar al menu'); 
                   end; 
                else
-                 begin
-                 clrscr;
-                 textcolor(12);
-                 writeln('Error: Solo debe ingresar 1 o 2');
-                 fin_programa('regresar');
-                 end;
+                  begin
+                  clrscr;
+                  textcolor(12);
+                  writeln('Error: Solo debe ingresar 1 o 2');
+                  fin_programa('regresar');
+                  end;
             end;
          until(opc = 1) or (opc = 2); 
          end;
@@ -248,14 +234,14 @@ Begin
          end;
       
       else
-        begin
-          clrscr;
-          textcolor(12);
-          writeln('      Error: debe ingresar numeros del 1 al 4');
-          writeln;
-          fin_programa('regresar al menu');
-          clrscr;
-        end;
+         begin
+            clrscr;
+            textcolor(12);
+            writeln('      Error: debe ingresar numeros del 1 al 4');
+            writeln;
+            fin_programa('regresar al menu');
+            clrscr;
+         end;
       end;
-  until (opc = 4);    
+   until (opc = 4);    
 End.
