@@ -193,55 +193,50 @@ Begin
     readln(opc);
 
     case opc of
-      1:
-        begin
-            solicitar_generacion; 
-            repeat
-              clrscr;
-              encabezado;
-              textcolor(10);
-              writeln('Seleccione 1 o 2');
-              writeln;
-              writeln('1. Configuracion Manual');
-              writeln('2. Configuracion Aleatoria');
-              writeln;
-              readln(opc);
+      1:begin
+         solicitar_generacion; 
+         repeat
+           clrscr;
+           encabezado;
+           textcolor(10);
+           writeln('Seleccione 1 o 2');
+           writeln;
+           writeln('1. Configuracion Manual');
+           writeln('2. Configuracion Aleatoria');
+           writeln;
+           readln(opc);
                   
-              case opc of
-                1: 
-                  begin
-                    clrscr;
-                    generar_caldo_manual(z);
-                    fin_programa('regresar al menu');                  
-                  end;
-                2:
-                  begin
-                    clrscr;
-                    generar_caldo_automatico(z);
-                    fin_programa('regresar al menu'); 
-                  end; 
-                else
-                  begin
-                    clrscr;
-                    textcolor(12);
-                    writeln('Error: Solo debe ingresar 1 o 2');
-                    fin_programa('regresar');
-                  end;
+           case opc of
+              1: begin
+                 clrscr;
+                 generar_caldo_manual(z);
+                 fin_programa('regresar al menu');                  
               end;
-            until(opc = 1) or (opc = 2); 
-        end;
-      2:
-        begin
-          clrscr;
-          if (caldo = '') then
+              2: begin
+                 clrscr;
+                 generar_caldo_automatico(z);
+                 fin_programa('regresar al menu'); 
+              end; 
+              else
+                 begin
+                 clrscr;
+                 textcolor(12);
+                 writeln('Error: Solo debe ingresar 1 o 2');
+                 fin_programa('regresar');
+              end;
+           end;
+        until(opc = 1) or (opc = 2); 
+      end;
+      2:begin
+         clrscr;
+         if (caldo = '') then
             begin
-              writeln('Actualmente no existe ningun caldo de cautivo,');
-              writeln('pulse 1 en el menu principal para crearlo.');
-              fin_programa('regresar al menu');
+               writeln('Actualmente no existe ningun caldo de cautivo,');
+               writeln('pulse 1 en el menu principal para crearlo.');
+               fin_programa('regresar al menu');
             end;
-        end;
-      3:
-        begin
+      end;
+      3:begin
           clrscr;
           if (caldo = '') then
             begin
