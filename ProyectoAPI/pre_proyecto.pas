@@ -1,19 +1,17 @@
 program pre_proyecto;
 uses crt;
 var
-   opcion: integer;
    caldo: string;
-
 
 function MinMax(min, max, seleccion:integer): boolean;
    // Verifica si el usuario ingreso un numero dentro del rango dado
    begin
       MinMax:= True;
-      if ((seleccion <= min) or (seleccion >= max)) then
+      if ((seleccion < min) or (seleccion > max)) then
          begin
             MinMax:= False;
             textcolor(lightred);
-            writeln('ERROR: Por favor ingrese un numero entre ',min + 1,' y ',max - 1);
+            writeln('ERROR: Por favor ingrese un numero entre ',min,' y ',max);
             writeln();
             readln();
             textcolor(lightgreen);
@@ -65,25 +63,7 @@ procedure Carga(palabra:string);
       delay(120);
    end;
    
-function MenuPrincipal(): integer;
-   begin
-      clrscr();
-      Encabezado();
-      Carga('Cargando');
 
-      clrscr();
-      Encabezado();
-      textcolor(lightgreen);
-      writeln('Bienvenido al Automata Celular Alive (ACA), ingrese 1, 2 o 3 para el menu.');
-      writeln;
-      writeln('1. Generar Caldo de Cultivo');
-      writeln('2. Mostrar Caldo de Cultivo');
-      writeln('3. Modificar Caldo de Cultivo existente');
-      writeln('4. Salir');
-      writeln;
-
-      readln(MenuPrincipal);
-   end;
    
 procedure TerminarPrograma(accion: string);
    begin
@@ -102,7 +82,7 @@ function SolicitarFilas(): integer;
          Encabezado();
          textcolor(lightgreen); write('Ingrese el numero de filas: ');
          textcolor(yellow); readln(SolicitarFilas);
-      until MinMax(0, 21, SolicitarFilas);      
+      until MinMax(1, 20, SolicitarFilas);      
       clrscr;
    end;
 
@@ -114,7 +94,7 @@ function SolicitarColumnas(): integer;
          Encabezado();
          textcolor(lightgreen); write('Ingrese el numero de columnas: ');
          textcolor(yellow); readln(SolicitarColumnas);
-      until MinMax(0, 21, SolicitarColumnas);      
+      until MinMax(1, 20, SolicitarColumnas);      
       clrscr;
    end;
 
@@ -126,7 +106,7 @@ function SolicitarCelulasVivas(x, y: integer): integer;
          Encabezado();
          textcolor(lightgreen); write('Ingrese el numero de celulas vivas (un maximo de ', (x*y), '): ');
          textcolor(yellow); readln(SolicitarCelulasVivas);           
-      until MinMax(0, (x*y) + 1, SolicitarCelulasVivas);      
+      until MinMax(0, (x*y), SolicitarCelulasVivas);      
       clrscr;
    end;
 
@@ -138,7 +118,7 @@ procedure SolicitarDatos(var columnas, filas, celulas: integer);
       celulas  := SolicitarCelulasVivas(filas, columnas);
    end;
 
-function PedirCoordenadas(filas, columnas: integer): string;
+function PedirCoordenadas(columnas, filas: integer): string;
    // Solicita al usuario las coordenadas de las celulas en la generacion manual
    var
       x,y: integer;
@@ -148,14 +128,14 @@ function PedirCoordenadas(filas, columnas: integer): string;
          Encabezado();
          textcolor(lightgreen); write('Ingrese la coordenada X (Posicion Horizontal) de la celula a colocar: ');
          textcolor(yellow); readln(x);
-      until((MinMax(0, filas + 1, x)));
+      until((MinMax(1, filas, x)));
       
       repeat
          clrscr();
          Encabezado();
          textcolor(lightgreen); write('Ingrese la coordenada Y (Posicion Vertical) de la celula a colocar: ');
          textcolor(yellow); readln(y);
-      until((MinMax(0, columnas + 1, y)));
+      until((MinMax(1, columnas, y)));
       
       PedirCoordenadas := IntToString(x) + ',' + IntToString(y);
    end;
@@ -163,16 +143,18 @@ function PedirCoordenadas(filas, columnas: integer): string;
 function PosicionDespuesDeDivisores(slashes: integer): integer;
    // Cuenta la posicion de los separadores "/" en el string del caldo
    begin
-      PosicionDespuesDeDivisores := 0;
-      repeat
-         if (caldo[PosicionDespuesDeDivisores] = '/') then
-            begin
-               slashes := (slashes - 1);
-            end;
-         PosicionDespuesDeDivisores := (PosicionDespuesDeDivisores + 1);
-      until(slashes <= 0);
+      PosicionDespuesDeDivisores := 1;
+      while (slashes > 0) do
+         begin
+            if (caldo[PosicionDespuesDeDivisores] = '/') then
+               begin
+                  slashes := (slashes - 1);
+               end;
+            PosicionDespuesDeDivisores := (PosicionDespuesDeDivisores + 1);
+         end;
    end;
 
+// ANCHOR ObtenerNumeroDivisor
 function ObtenerNumeroDivisor(divisor: integer): string;
    // Devuelve el valor despues del divisor "/" en el caldo
    var
@@ -186,7 +168,7 @@ function ObtenerNumeroDivisor(divisor: integer): string;
       until(caldo[i] = '/');
    end;
 
-function VerificarCoordenadas(caldo, coordenadas: string): boolean;
+function VerificarCoordenadas(coordenadas: string): boolean;
    // Verifica que las coordenadas existan en el caldo
    var
       i, cantidadCelulas: integer;
@@ -204,7 +186,27 @@ function VerificarCoordenadas(caldo, coordenadas: string): boolean;
          end;
    end;
 
-procedure MostrarCelulas(caldo: string);
+procedure EliminarCoordenadas(coordenadas: string);
+   // Verifica que las coordenadas existan en el caldo
+   var
+      caldoTemporal: string;
+      i, cantidadCelulas: integer;
+   begin
+      cantidadCelulas := StringToInt(ObtenerNumeroDivisor(2));
+      caldoTemporal := ObtenerNumeroDivisor(0) + '/' + ObtenerNumeroDivisor(1) + '/' + ObtenerNumeroDivisor(2) + '/';
+
+      for i := 3 to (cantidadCelulas + 2) do
+         begin
+            if (coordenadas <> ObtenerNumeroDivisor(i)) then
+               begin
+                  caldoTemporal := (caldoTemporal + ObtenerNumeroDivisor(i) + '/');
+               end;
+         end;
+
+      caldo := caldoTemporal;
+   end;
+
+procedure MostrarCelulas();
    // Dibuja las celulas en pantalla
    var
       i, cantidadCelulas: integer;
@@ -224,6 +226,8 @@ procedure ExisteCaldo();
    begin
       if (caldo <> '') then
          begin
+            clrscr();
+            Encabezado();
             textcolor(lightred);
             writeln();
             writeln('NOTA: Si genera un nuevo caldo, se sobreescribira el existente.');
@@ -255,7 +259,7 @@ procedure GeneracionCaldoManual();
          Encabezado;
          textcolor(lightgreen);
          coordenadas := PedirCoordenadas(filas, columnas);
-         if (VerificarCoordenadas(caldo, coordenadas)) then
+         if (VerificarCoordenadas(coordenadas)) then
             begin
                caldo := (caldo + coordenadas + '/');
                i := i - 1;
@@ -276,6 +280,7 @@ procedure GeneracionCaldoManual();
       textcolor(lightcyan); writeln('Caldo: ', caldo);
    end;
 
+// ANCHOR GeneracionCaldoAutomatico
 procedure GenerarCaldoAutomatico();
    // Proceso de la generacion del caldo automatico
    var
@@ -293,8 +298,8 @@ procedure GenerarCaldoAutomatico();
 
       repeat
          begin
-            coordenadas := (IntToString((random(filas) + 1)) + ',' + IntToString((random(columnas) + 1)));
-            if (VerificarCoordenadas(caldo, coordenadas)) then
+            coordenadas := (IntToString((random(columnas) + 1)) + ',' + IntToString((random(filas) + 1)));
+            if (VerificarCoordenadas(coordenadas)) then
                begin
                   caldo := (caldo + coordenadas + '/');
                   i := i - 1;
@@ -341,33 +346,35 @@ procedure MenuGeneracion();
                TerminarPrograma('regresar al menu'); 
                end;
          end;
-      until(MinMax(0, 4, seleccion)); 
+      until(MinMax(1, 3, seleccion)); 
    end;
    
 // ANCHOR MostrarCaldo
 procedure MostrarCaldo();
    // Dibuja el caldo en pantalla
    var
-      i, columnas, filas, total: integer;
+      i, x, y, total: integer;
       posicion: string;
    begin 
-      columnas := StringToInt(ObtenerNumeroDivisor(0));
-      filas := StringToInt(ObtenerNumeroDivisor(1));
-      total := (columnas * filas);
+      x := StringToInt(ObtenerNumeroDivisor(0));
+      y := StringToInt(ObtenerNumeroDivisor(1));
+      total := (x * y);
 
       for i := 1 to total do
          begin
-            if (((i - 1) mod columnas = 0) or (i = 1)) then
+            if (((i - 1) mod x = 0) or (i = 1)) then
                begin
                   writeln();
+                  delay(75);
                end
                else
                   begin
+
                      textcolor(lightgreen); write('|');
                   end;
 
-            posicion := (IntToString(((i - 1) mod filas) + 1) + ',' + IntToString(((i - 1) div filas) + 1));
-            if (VerificarCoordenadas(caldo, posicion)) then
+            posicion := (IntToString(((i - 1) mod x) + 1) + ',' + IntToString(((i - 1) div x) + 1));
+            if (VerificarCoordenadas(posicion)) then
                begin
                   textcolor(darkgray); write('-');
                end 
@@ -383,22 +390,61 @@ procedure MostrarCaldo();
 // ANCHOR MostrarInformacionCaldo
 procedure MostrarInformacionCaldo();
    // Muestra la informacion del caldo
-   var
-      columnas, filas: integer;
    begin 
-      columnas := StringToInt(ObtenerNumeroDivisor(0));
-      filas := StringToInt(ObtenerNumeroDivisor(1));
+      delay(200);
+      textcolor(lightgreen); write('Columnas: '); 
+      textcolor(lightcyan); writeln(ObtenerNumeroDivisor(0));
+      delay(200);
+      textcolor(lightgreen); write('Filas: '); 
+      textcolor(lightcyan); writeln(ObtenerNumeroDivisor(1));
+      delay(200);
+      textcolor(lightgreen); write('Celulas: '); 
+      textcolor(lightcyan); writeln(ObtenerNumeroDivisor(2));
 
-      textcolor(lightgreen);
-      writeln('Columnas: ', columnas);
-      writeln('Filas: ', filas);
       writeln();
-      MostrarCelulas(caldo);
+      MostrarCelulas();
       writeln();
-      textcolor(lightcyan);
-      writeln('Caldo: ', caldo);
-      TerminarPrograma('regresar al menu principal');
-      readkey();
+
+      textcolor(lightgreen); write('Caldo: ');
+      textcolor(lightcyan); writeln(caldo);
+   end;
+
+procedure CambiarValor (divisor: integer; valor: string);
+   var
+      caldoTemporal: string;
+      i: integer;
+   begin
+      caldoTemporal := '';
+      for i := 1 to length(caldo) do 
+         begin
+            if (caldo[i] = '/') then
+               begin
+                  divisor := (divisor - 1);
+               end;
+
+            if ((divisor = 0) and (caldo[i] = '/')) then
+               begin
+                  caldoTemporal := (caldoTemporal + '/' + valor);
+               end;
+            if (divisor <> 0) then
+               begin
+                  caldoTemporal := (caldoTemporal + caldo[i]);
+               end;
+         end;
+      caldo := caldoTemporal;
+   end;
+
+// ANCHOR Agregar Celula
+procedure AgregarCelula(posicion: string);
+   begin
+      CambiarValor(2, IntToString(StringToInt(ObtenerNumeroDivisor(2)) + 1));
+      caldo := caldo + posicion + '/';
+   end;
+
+procedure RemoverCelula(posicion: string);
+   begin
+      EliminarCoordenadas(posicion);
+      CambiarValor(2, IntToString(StringToInt(ObtenerNumeroDivisor(2)) - 1));
    end;
 
 procedure ModificarCaldo();
@@ -410,103 +456,158 @@ procedure ModificarCaldo();
       repeat
          textcolor(lightgreen); write('Seleccione la posicion X a modificar: ');
          textcolor(yellow); readln(columna);
-      until(MinMax(0, StringToInt(ObtenerNumeroDivisor(0)), columna));
+      until(MinMax(1, StringToInt(ObtenerNumeroDivisor(0)), columna));
 
       repeat
          textcolor(lightgreen); write('Seleccione la posicion Y a modificar: ');
          textcolor(yellow); readln(fila);
-      until(MinMax(0, StringToInt(ObtenerNumeroDivisor(1)), fila));
+      until(MinMax(1, StringToInt(ObtenerNumeroDivisor(1)), fila));
 
       posicion := (IntToString(columna) + ',' + IntToString(fila));
       
-      if (VerificarCoordenadas(caldo, posicion)) then
+      if (VerificarCoordenadas(posicion)) then
          begin
             repeat
-               writeln('Desea convertir este espacio en una celula viva? (0: No | 1: Si)');
-               readln(seleccion);
-            until (MinMax(-1, 2, seleccion));
+               writeln();
+               textcolor(lightgreen); writeln('Desea convertir este espacio en una celula viva? (0: No | 1: Si)');
+               writeln();
+               textcolor(yellow); readln(seleccion);
+            until (MinMax(0, 1, seleccion));
             if (seleccion = 1) then
-            begin
-               caldo:= Concat(caldo + posicion);
-
-               //TODO - hacer que cambie la cantidad de celulas
-            end;
+               begin
+                  AgregarCelula(posicion);
+               end;
          end
          else
             begin
                repeat
-                  writeln('Desea convertir este espacio en una celula muerta? (0: No | 1: Si)');
-                  readln(seleccion);
-               until (MinMax(-1, 2, seleccion));
-
-               //TODO - this
+                  writeln();
+                  textcolor(lightgreen); writeln('Desea convertir este espacio en una celula muerta? (0: No | 1: Si)');
+                  writeln();
+                  textcolor(yellow); readln(seleccion);
+               until (MinMax(0, 1, seleccion));
+               if (seleccion = 1) then
+                  begin
+                     RemoverCelula(posicion);
+                  end;
             end;
+   end;
 
+procedure MenuModificacion();
+   var
+      seleccion: integer;
+   begin
+      repeat
+         repeat
+            clrscr(); Encabezado();
+            MostrarCaldo();
+            textcolor(lightgreen);
+            delay(200); writeln('Modificacion del Caldo');
+            writeln();
+            delay(200); writeln('1. Modificar caldo');
+            delay(200); writeln('2. Regresar al menu principal');
+            writeln();
+            textcolor(yellow); readln(seleccion);
+         until(MinMax(1, 2, seleccion));
+
+         if (seleccion = 1) then
+            begin
+               clrscr();
+               Encabezado();
+               MostrarCaldo();
+               ModificarCaldo();
+               
+               clrscr(); Encabezado();
+               MostrarCaldo();
+               MostrarInformacionCaldo();
+               writeln();
+               TerminarPrograma('continuar');
+            end;
+      until(seleccion = 2);
+   end;
+
+procedure MenuPrincipal();
+   var
+      seleccion: integer;
+   begin
+      repeat
+
+         clrscr();
+         Encabezado();
+         textcolor(lightgreen);
+         delay(200); writeln('Bienvenido al Automata Celular Alive (ACA), ingrese 1, 2 o 3 para el menu.');
+         writeln;
+         delay(200); writeln('1. Generar Caldo de Cultivo');
+         delay(200); writeln('2. Mostrar Caldo de Cultivo');
+         delay(200); writeln('3. Modificar Caldo de Cultivo existente');
+         delay(200); writeln('4. Salir');
+         writeln;
+
+         readln(seleccion);
+
+         case seleccion of
+            1: begin
+               ExisteCaldo(); 
+               MenuGeneracion();
+               end;
+            2: begin
+               clrscr();
+               Encabezado();
+               if (caldo = '') then
+                  begin
+                     textcolor(lightred);
+                     writeln('Actualmente no existe ningun caldo de cautivo.');
+                     writeln('Pulse 1 en el menu principal para crearlo.');
+                     TerminarPrograma('regresar al menu principal');
+                  end
+                  else
+                     begin
+                        MostrarCaldo();
+                        MostrarInformacionCaldo();
+                        TerminarPrograma('regresar al menu principal');
+                     end;
+               end;
+            3: begin
+               clrscr;
+               if (caldo = '') then
+                  begin
+                     Encabezado();
+                     textcolor(lightred);
+                     writeln('Actualmente no existe ningun caldo de cautivo.');
+                     writeln('Pulse 1 en el menu principal para crearlo.');
+                     TerminarPrograma('regresar al menu principal');
+                  end
+                  else
+                     begin
+                        MenuModificacion();
+                     end;
+               end;
+            4: begin
+               clrscr();
+               Encabezado();
+               writeln('Gracias por usar el programa.');
+               TerminarPrograma('finalizar');
+               end;
+            else
+               begin
+                  clrscr;
+                  textcolor(lightred);
+                  writeln('      Error: debe ingresar numeros del 1 al 4');
+                  writeln;
+                  TerminarPrograma('regresar al menu');
+                  clrscr;
+               end;
+            end;
+      until (seleccion = 4);
    end;
 
 Begin
    randomize;
    caldo := '';
-   repeat
-      opcion := MenuPrincipal();
 
-      case opcion of
-      1: begin
-         ExisteCaldo(); 
-         MenuGeneracion();
-         end;
-      2: begin
-         clrscr;
-         if (caldo = '') then
-            begin
-               Encabezado();
-               textcolor(lightred);
-               writeln('Actualmente no existe ningun caldo de cautivo.');
-               writeln('Pulse 1 en el menu principal para crearlo.');
-               TerminarPrograma('regresar al menu');
-            end
-            else
-               begin
-                  MostrarCaldo();
-                  MostrarInformacionCaldo();
-               end;
-         end;
-      3: begin
-         clrscr;
-         if (caldo = '') then
-            begin
-               Encabezado();
-               textcolor(lightred);
-               writeln('Actualmente no existe ningun caldo de cautivo.');
-               writeln('Pulse 1 en el menu principal para crearlo.');
-               TerminarPrograma('regresar al menu');
-            end
-            else
-               begin
-                  clrscr(); Encabezado();
-                  MostrarCaldo();
-                  ModificarCaldo();
+   clrscr();
+   Encabezado();
+   textcolor(lightgreen); Carga('Cargando');
 
-                  clrscr(); Encabezado();
-                  MostrarCaldo();
-                  MostrarInformacionCaldo();
-               end;
-         end;
-      4: begin
-         clrscr();
-         Encabezado();
-         writeln('Gracias por usar el programa.');
-         TerminarPrograma('finalizar');
-         end;
-      else
-         begin
-            clrscr;
-            textcolor(lightred);
-            writeln('      Error: debe ingresar numeros del 1 al 4');
-            writeln;
-            TerminarPrograma('regresar al menu');
-            clrscr;
-         end;
-      end;
-   until (opcion = 4);
+   MenuPrincipal();
 End.
