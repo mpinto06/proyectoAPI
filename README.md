@@ -13,6 +13,7 @@ notas, camiones, puntaje son variables legibles.
 Usar pascal case para escribirlas. Ejemplo:
 
 function EstaEsUnaFuncion ()
-function GenerarNumero
+
+function GenerarNumero ()
 
 
