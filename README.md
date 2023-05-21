@@ -20,4 +20,10 @@ function EstaEsUnaFuncion ()
 
 function GenerarNumero ()
 
+## Textcolor
+Usar los nombres para los colores
 
+textcolor(yellow)
+
+## Comentarios
+Hay que poner comentarios en cada funcion explicando lo que hace. (lo evaluan)
